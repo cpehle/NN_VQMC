@@ -17,12 +17,10 @@ class HiddenLayer {
         int n_h;
         int n_in;
 
-        double initial_width;
-
         MatrixXd W;
          
         // Constructor
-        FFNet(MTRand & random, int nIn, int nH);
+        HiddenLayer(MTRand & random, int nIn, int nH);
         
         // Functions
         VectorXd forward_pass(VectorXd input);
@@ -31,7 +29,7 @@ class HiddenLayer {
         void saveParameters(string& modelName);
 
         VectorXd sigmoid(VectorXd vector); 
-        VectorXd hyperTan(VectorXd vector);
+        //VectorXd hyperTan(VectorXd vector);
         
 };
 

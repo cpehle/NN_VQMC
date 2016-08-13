@@ -31,7 +31,7 @@ HiddenLayer::HiddenLayer(MTRand& random, int nIn, int nH)
 // Forward Pass 
 //*****************************************************************************
 
-VectorXd HiddenLayer::forward_pass(MatrixXd input) {
+VectorXd HiddenLayer::forward_pass(VectorXd input) {
     
     VectorXd pre_activation(n_h);
     VectorXd activation(n_h);
@@ -80,7 +80,6 @@ void HiddenLayer::saveParameters(string& modelName)
 }
 
 
-
 //*****************************************************************************
 // Sigmoid function
 //*****************************************************************************
@@ -97,5 +96,4 @@ MatrixXd HiddenLayer::sigmoid(VectorXd vector) {
     return X;
 
 }
-
 
