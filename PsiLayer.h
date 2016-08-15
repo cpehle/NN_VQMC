@@ -1,34 +1,37 @@
-#ifndef HIDDENLAYER_H
-#define HIDDENLAYER_H
+#ifndef PSILAYER_H
+#define PSILAYER_H
 
 #include <stdio.h>
 #include <math.h>
 #include <stdlib.h>
 #include "MersenneTwister.h"
+#include <Eigen/Core>
+#include <map>
+#include <complex>
 
 using namespace std;
 using namespace Eigen;
 
-class HiddenLayer {
+class PsiLayer {
     
     public:
         
         //Network Parameters
-        int n_h;
         int n_in;
 
-        MatrixXd W;
+        VectorXcd Z;
          
         // Constructor
-        HiddenLayer(MTRand & random, int nIn, int nH);
+        PsiLayer(MTRand & random, int nIn);
         
         // Functions
-        VectorXd forward_pass(VectorXd input);
+        VectorXcd flattenHiddenMatrix(MatrixXcd & h_matrix);
+        complex<double> forward_pass(VectorXcd & h_vector);
         
         void loadParameters(string& modelName);
         void saveParameters(string& modelName);
 
-        VectorXd sigmoid(VectorXd vector); 
+        VectorXcd sigmoid(VectorXcd vector); 
         //VectorXd hyperTan(VectorXd vector);
         
 };
