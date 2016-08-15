@@ -17,16 +17,16 @@ class PsiLayer {
     public:
         
         //Network Parameters
+        int n_f;
         int n_in;
 
-        VectorXcd Z;
+        MatrixXcd Z;
          
         // Constructor
-        PsiLayer(MTRand & random, int nIn);
+        PsiLayer(MTRand & random, int nIn, int nF);
         
         // Functions
-        VectorXcd flattenHiddenMatrix(MatrixXcd & h_matrix);
-        complex<double> forward_pass(VectorXcd & h_vector);
+        complex<double> forward_pass(MatrixXcd & input);
         
         void loadParameters(string& modelName);
         void saveParameters(string& modelName);
