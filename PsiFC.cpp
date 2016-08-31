@@ -4,15 +4,15 @@
 // Constructor 
 //*****************************************************************************
 
-PsiLayer::PsiLayer(MTRand& random, int nH, double B) 
+PsiLayer::PsiLayer(MTRand& random, int nIN, double B) 
 {
     
-    n_h = nH;
+    n_in = nIN;
     bound = B;
 
     double r;
 
-    for (int i=0; i<n_h; i++) {
+    for (int i=0; i<n_in; i++) {
         r = random.rand(bound);
         Z.push_back(bound*(2.0 * r - 1.0));
     }
@@ -30,7 +30,7 @@ double PsiLayer::forward_pass(vector<double> & input) {
     double activation= 0.0;
     double psi;
     
-    for (int i=0; i<n_h; i++) {
+    for (int i=0; i<n_in; i++) {
         activation += Z[i] * input[i] + c; 
     }
     psi = 1.0/(1.0+exp(-activation));
@@ -42,12 +42,13 @@ double PsiLayer::forward_pass(vector<double> & input) {
 // Save the Network Parameters
 //*****************************************************************************
 
-void PsiLayer::loadParameters(ofstream & file) 
+void PsiLayer::loadParameters(ifstream & file) 
 {
         
-    for (int i=0; i<n_h; i++) {
+    for (int i=0; i<n_in; i++) {
         file >> Z[i];
     }
+    file >> c;
 }
 
 
@@ -58,9 +59,12 @@ void PsiLayer::loadParameters(ofstream & file)
 void PsiLayer::saveParameters(ofstream & file) 
 {
 
-    for (int i=0; i<n_h; i++) {
+    for (int i=0; i<n_in; i++) {
         file << Z[i] << "  ";
     }
+    file << endl << endl;
+    
+    file << c;
     file << endl << endl;
 }
 

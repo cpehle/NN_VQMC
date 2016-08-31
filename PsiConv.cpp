@@ -37,7 +37,7 @@ double PsiLayer::forward_pass(vector<vector<double> > & input) {
     
     for (int k=0; k<n_in; k++) {
         for (int i=0; i<n_f; i++) {
-            activation += Z[i][k] * input[k][i]; 
+            activation += Z[i][k] * input[k][i] + c; 
         }
     }
     psi = 1.0/(1.0+exp(-activation));
@@ -51,9 +51,9 @@ double PsiLayer::forward_pass(vector<vector<double> > & input) {
 
 void PsiLayer::loadParameters(ofstream & file) 
 {
-        
-    for (int k=0; k<n_in; k++) {
-        for (int i=0; i<n_f; i++) {
+    
+    for (int i=0; i<n_f; i++) {
+        for (int k=0; k<n_in; k++) {
             file >> Z[i][k];
         }
     }
@@ -67,8 +67,8 @@ void PsiLayer::loadParameters(ofstream & file)
 void PsiLayer::saveParameters(ofstream & file) 
 {
 
-    for (int k=0; k<n_in; k++) {
-        for (int i=0; i<n_f; i++) {
+    for (int i=0; i<n_f; i++) {
+        for (int k=0; k<n_in; k++) {
             file << Z[i][k] << "  ";
         }
         file << endl;
