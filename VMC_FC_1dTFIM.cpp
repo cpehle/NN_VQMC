@@ -5,7 +5,8 @@
 //*****************************************************************************
 
 VariationalMC::VariationalMC(MTRand& random, int L_, double h_,
-                             int MCS_, double lr_) 
+                             int MCS_, double lr_,
+                             PsiLayer& PL, HiddenLayer& HL) 
 {
     
     //n_in          = int(parameters["nIn"]); 
@@ -14,7 +15,8 @@ VariationalMC::VariationalMC(MTRand& random, int L_, double h_,
     lr = lr_;
     MCS = MCS_;
     L = L_;
-    epochs = 100;
+    epochs = 10000;
+    eq = 100;
 
     J = 1.0;
     h = h_;
@@ -25,7 +27,22 @@ VariationalMC::VariationalMC(MTRand& random, int L_, double h_,
         else
             spins.push_back(-1);
     }
+   
+    vector<double> temp;
+    temp.assign(HL.n_h,0.0);
+     
+    for (int k=0; k< HL.n_in; k++) {
+        dP_dW.push_back(temp);
+        dP_dW_e.push_back(temp); 
+    }
 
+    dP_db.assign(HL.n_h,0.0);
+    dP_db_e.assign(HL.n_h,0.0);
+    
+    dP_dZ.assign(PL.n_in,0.0);
+    dP_dZ_e.assign(PL.n_in,0.0);
+ 
+    
 }
 
 void VariationalMC::reset(PsiLayer& PL, HiddenLayer& HL) {
@@ -72,7 +89,7 @@ double VariationalMC::getLocalEnergy(PsiLayer& PL, HiddenLayer& HL) {
     
     psi = getPSI(PL,HL);
 
-    for (int i=0; i<L-2; i++) {
+    for (int i=0; i<L-1; i++) {
         e += -J * spins[i]*spins[i+1];
         spins[i] *= -1;
         psi_flip = getPSI(PL,HL);
@@ -122,102 +139,94 @@ void VariationalMC::updateObservables(PsiLayer& PL, HiddenLayer& HL) {
     E += eL;
 
 }
-//void VariationalMC::equilibrate(MTRand& random,PsiLayer& PL, ConvLayer& CL){
-//    
-//    int site;
-//    double ran_num;
-//    double ratio;
-//   
-//    for (int k = 0; k< L; k++) {
-//
-//        site = random.randInt(L-1);
-//
-//        complex<double> PSI;
-//        complex<double> PSI_prime;
-//
-//        PSI = getPSI(PL,CL);
-//        
-//        spins(site) *= -1;
-//
-//        PSI_prime = getPSI(PL,CL);
-//        
-//        ratio = norm(PSI_prime) / norm(PSI);
-//        
-//        if (ratio < random.rand()) {
-//            spins(site) *= -1;
-//        }
-//    }
-//}
-//
-//
-//void VariationalMC::MetropolisUpdate(MTRand& random,PsiLayer& PL, ConvLayer& CL){
-//    
-//    int site;
-//    double ran_num;
-//    double ratio;
-//   
-//    for (int k = 0; k< L; k++) {
-//
-//        site = random.randInt(L-1);
-//
-//        complex<double> PSI;
-//        complex<double> PSI_prime;
-//
-//        PSI = getPSI(PL,CL);
-//        
-//        spins(site) *= -1;
-//
-//        PSI_prime = getPSI(PL,CL);
-//        
-//        ratio = norm(PSI_prime) / norm(PSI);
-//        
-//        updateObservables(PL,CL);
-// 
-//        if (ratio < random.rand()) {
-//            spins(site) *= -1;
-//        }
-//    }
-//}
-//
-//void VariationalMC::train(MTRand & random, PsiLayer& PL, ConvLayer& CL) 
-//{
-//    
-//    int eq_steps = 500;
-//    double lr = learning_rate;
-//
-//    for (int k=0; k<epochs; k++) {
-//
-//        reset(PL,CL);
-//        
-//        for (int i=0; i<eq_steps; i++) {
-//            equilibrate(random,PL,CL);
-//        }
-//        
-//        for (int i=0; i<MCS; i++) {
-//            MetropolisUpdate(random,PL,CL);
-//        }
-//
-//        for (int k=0; k<PL.n_in; k++) {
-//            for (int i=0; i<PL.n_f; i++) {
-//                PL.Z(i,k) += -(lr/1.0*MCS)*(dPSI_dZ_cj_e(i,k)-dPSI_dZ_cj(i,k)*E + dPSI_dZ_e_cj(i,k)-dPSI_dZ(i,k)*E);
-//            }
-//        }
-//        for (int i=0; i<CL.n_f; i++) {
-//            for (int j=0; j<CL.f_size; j++) {
-//                CL.W(i,j) += -(lr/1.0*MCS)*(dPSI_dW_cj_e(i,j)-dPSI_dW_cj(i,j)*E + dPSI_dW_e_cj(i,j)-dPSI_dW(i,j)*E);
-//            }
-//        }
-//
-//        //Energy = E.real() / 1.0*MCS;
-//        //cout << E.real()/MCS << endl;
-//        cout << "Epoch: " << k << "   Ground State Energy: " << E.real()/MCS << endl; 
-//
-//    }
-//    
-//
-//
-//}
-//
+
+void VariationalMC::updateParameters(PsiLayer& PL, HiddenLayer& HL) {
+
+    
+    double mcs = 1.0*MCS;
+
+    for (int i=0; i<PL.n_in; i++) {
+            PL.Z[i] += -(2.0*lr)*(dP_dZ_e[i]/mcs-dP_dZ[i]*E/(mcs*mcs));
+        }
+        
+        PL.c += -(2.0*lr)*(dP_dc_e/mcs-dP_dc*E/(mcs*mcs));
+        
+        for (int k=0; k<HL.n_in; k++) {
+            for (int i=0; i<HL.n_h; i++) {
+               HL.W[k][i] += -(2.0*lr)*(dP_dW_e[k][i]/mcs-dP_dW[k][i]*E/(mcs*mcs)); 
+            }
+        }
+
+        for (int i=0; i<HL.n_h; i++) {
+            HL.b[i] += -(2.0*lr)*(dP_db_e[i]/mcs-dP_db[i]*E/(mcs*mcs)); 
+        }
+        
+}
+
+void VariationalMC::MC_run(MTRand& random, PsiLayer& PL, HiddenLayer& HL){
+    
+    int site;
+    double q;
+    double psi;
+    double psi_prime;
+    
+    for (int n=0; n<eq; n++) {
+        for (int k = 0; k< L; k++) {
+            site = random.randInt(L-1);
+            psi = getPSI(PL,HL);
+            spins[site] *= -1;
+            psi_prime = getPSI(PL,HL);
+            q = (psi_prime*psi_prime) / (psi*psi);
+            
+            if (random.rand() > q) {
+                spins[site] *= -1;
+            }
+        }
+    }
+
+    for (int n=0; n<MCS; n++) {
+        for (int k = 0; k< L; k++) {
+            site = random.randInt(L-1);
+            psi = getPSI(PL,HL);
+            spins[site] *= -1;
+            psi_prime = getPSI(PL,HL);
+            q = (psi_prime*psi_prime) / (psi*psi);
+             
+            if (random.rand() > q) {
+                spins[site] *= -1;
+            }
+        }
+        updateObservables(PL,HL);
+    }
+}
+
+void VariationalMC::train(MTRand & random, PsiLayer& PL, HiddenLayer& HL) 
+{
+    
+    int proximityStep = 2500;
+
+    for (int k=0; k<proximityStep; k++) {
+        reset(PL,HL);
+        MC_run(random,PL,HL);
+        updateParameters(PL,HL);
+        Energy = E/(1.0*MCS*L);
+        if ((k%100) == 0)
+            cout << "Epoch: " << k << "   Ground State Energy: " << Energy << endl; 
+    }
+    lr = lr/1.0;
+    for (int k=proximityStep; k<epochs; k++) {
+        reset(PL,HL);
+        MC_run(random,PL,HL);
+        updateParameters(PL,HL);
+        Energy = E/(1.0*MCS*L);
+        if ((k%100) == 0)
+            cout << "Epoch: " << k << "   Ground State Energy: " << Energy << endl; 
+    }
+ 
+
+
+}
+
 ////*****************************************************************************
 //// Print Network Informations
 ////*****************************************************************************

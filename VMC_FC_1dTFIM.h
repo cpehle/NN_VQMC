@@ -41,17 +41,17 @@ class VariationalMC {
         double Energy;
     
         // Constructor
-        VariationalMC(MTRand & random, int L_,double h_,int MCS_, double lr_);
+        VariationalMC(MTRand & random, int L_,double h_,int MCS_, double lr_,
+                PsiLayer& PL, HiddenLayer& HL);
 
         // Core Functions
         void reset(PsiLayer& PL, HiddenLayer& HL);
         double getLocalEnergy(PsiLayer& PL, HiddenLayer& HL);
         double getPSI(PsiLayer& PL, HiddenLayer& HL);
         void updateObservables(PsiLayer& PL, HiddenLayer& HL);
- 
-        //void equilibrate(MTRand& random,PsiLayer& PL, ConvLayer& CL);
-        //void MetropolisUpdate(MTRand & random,PsiLayer& PL, ConvLayer& CL);
-                //void train(MTRand & random,PsiLayer& PL, ConvLayer& CL);
+        void MC_run(MTRand & random,PsiLayer& PL, HiddenLayer& HL);
+        void updateParameters(PsiLayer& PL, HiddenLayer& HL);
+        void train(MTRand & random,PsiLayer& PL, HiddenLayer& HL);
  
         //// Utilities
         //void saveParameters(string& modelName);
