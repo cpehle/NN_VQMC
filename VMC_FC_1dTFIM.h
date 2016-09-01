@@ -9,7 +9,7 @@
 #include "HiddenFC.cpp"
 
 using namespace std;
-using namespace Eigen;
+//using namespace Eigen;
 
 class VariationalMC {
     
@@ -42,7 +42,7 @@ class VariationalMC {
     
         // Constructor
         VariationalMC(MTRand & random, int L_,double h_,int MCS_, double lr_,
-                PsiLayer& PL, HiddenLayer& HL);
+                int ep, PsiLayer& PL, HiddenLayer& HL);
 
         // Core Functions
         void reset(PsiLayer& PL, HiddenLayer& HL);
@@ -51,12 +51,13 @@ class VariationalMC {
         void updateObservables(PsiLayer& PL, HiddenLayer& HL);
         void MC_run(MTRand & random,PsiLayer& PL, HiddenLayer& HL);
         void updateParameters(PsiLayer& PL, HiddenLayer& HL);
-        void train(MTRand & random,PsiLayer& PL, HiddenLayer& HL);
+        void train(MTRand & random,ofstream & file,
+                   PsiLayer& PL, HiddenLayer& HL);
  
         //// Utilities
         //void saveParameters(string& modelName);
         //void loadParameters(string& modelName);
-        //void printNetwork(PsiLayer& PL, ConvLayer& CL);
+        void printNetwork(PsiLayer& PL, HiddenLayer& HL);
 
 };
 

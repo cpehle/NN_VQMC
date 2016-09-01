@@ -1,39 +1,43 @@
 #include <stdlib.h>
 #include <time.h>
-#include <omp.h>
 #include <fstream>
 #include "VMC_FC_1dTFIM.cpp"
-//#include "HiddenFC.cpp"
-//#include "PsiFC.cpp"
 
 int main(int argc, char* argv[]) {
    
-    //setNbThreads(8);
+    
+    map<string,string> Helper;
+    map<string,float> Parameters;
+    
+    initializeParameters(Parameters);
+    
+    string model = argv[1];
+    string network = "FCNet";
 
-    //map<string,string> Helper;
-    //map<string,float> Parameters;
-    //string CD_id;
-    //string Reg_id;
+    get_option("h","Magnetic Field",argc,argv,Parameters,Helper);
+    get_option("L","System Size",argc,argv,Parameters,Helper);
+    get_option("lr","Learning Rate",argc,argv,Parameters,Helper);
+    //get_option("w","Initial parameters width distribution",argc,argv,Parameters,Helper);
+    get_option("nH","Number of Hidden Units",argc,argv,Parameters,Helper);
+    
+    Parameters["w"]   = 1.0;
+    Parameters["ep"]  = 10000;
+    Parameters["MCS"] = 100;
 
     MTRand random(1234);
     
-    //int N_FILTERS = 4;
-    //int L_ = 6;
-    //int FILTER_SIZE = 2;
-    //int HIDDEN_UNITS = (L_-1) * N_FILTERS;
-    //double bound = 0.01;
+    HiddenLayer   HL(random,Parameters["L"],Parameters["nH"],Parameters["w"]);
     
-    double bound = 1.0;
-    int nH = 8;
-    int L_ = 8; 
-    double h_ = 2.0;
-
-    HiddenLayer   HL(random,L_,nH,bound);
-    PsiLayer      PL(random,nH,bound);
-    VariationalMC VMC(random,L_,h_,1000,0.1,PL,HL); 
+    PsiLayer      PL(random,Parameters["nH"],Parameters["w"]);
     
-    //cout << PL.Z << endl << endl;
-    //cout << CL.W << endl; 
-    VMC.train(random,PL,HL);
+    VariationalMC VMC(random,Parameters["L"],Parameters["h"],
+                             Parameters["MCS"],Parameters["lr"],
+                             Parameters["ep"],PL,HL); 
+    
+    string rawFileName = buildOutputNameRaw(network,model,Parameters);
+    ofstream fout(rawFileName);
+    
+    VMC.printNetwork(PL,HL); 
+    VMC.train(random,fout,PL,HL);
 
 }

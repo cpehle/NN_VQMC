@@ -5,7 +5,7 @@
 //*****************************************************************************
 
 VariationalMC::VariationalMC(MTRand& random, int L_, double h_,
-                             int MCS_, double lr_,
+                             int MCS_, double lr_, int ep,
                              PsiLayer& PL, HiddenLayer& HL) 
 {
     
@@ -15,7 +15,7 @@ VariationalMC::VariationalMC(MTRand& random, int L_, double h_,
     lr = lr_;
     MCS = MCS_;
     L = L_;
-    epochs = 10000;
+    epochs = ep;
     eq = 100;
 
     J = 1.0;
@@ -200,7 +200,8 @@ void VariationalMC::MC_run(MTRand& random, PsiLayer& PL, HiddenLayer& HL){
     }
 }
 
-void VariationalMC::train(MTRand & random, PsiLayer& PL, HiddenLayer& HL) 
+void VariationalMC::train(MTRand & random, ofstream & file,
+                          PsiLayer& PL, HiddenLayer& HL) 
 {
     
     int proximityStep = 2500;
@@ -210,8 +211,9 @@ void VariationalMC::train(MTRand & random, PsiLayer& PL, HiddenLayer& HL)
         MC_run(random,PL,HL);
         updateParameters(PL,HL);
         Energy = E/(1.0*MCS*L);
-        if ((k%100) == 0)
-            cout << "Epoch: " << k << "   Ground State Energy: " << Energy << endl; 
+        file << Energy << endl;
+        //if ((k%1) == 0)
+        cout << "Epoch: " << k << "   Ground State Energy: " << Energy << endl; 
     }
     lr = lr/1.0;
     for (int k=proximityStep; k<epochs; k++) {
@@ -219,8 +221,9 @@ void VariationalMC::train(MTRand & random, PsiLayer& PL, HiddenLayer& HL)
         MC_run(random,PL,HL);
         updateParameters(PL,HL);
         Energy = E/(1.0*MCS*L);
-        if ((k%100) == 0)
-            cout << "Epoch: " << k << "   Ground State Energy: " << Energy << endl; 
+        file << Energy << endl;
+        //if ((k%100) == 0)
+        cout << "Epoch: " << k << "   Ground State Energy: " << Energy << endl; 
     }
  
 
@@ -231,22 +234,21 @@ void VariationalMC::train(MTRand & random, PsiLayer& PL, HiddenLayer& HL)
 //// Print Network Informations
 ////*****************************************************************************
 //
-//void VariationalMC::printNetwork(PsiLayer& PL, ConvLayer& CL) 
-//{
-//
-//    cout << "\n\n******************************\n\n" << endl;
-//    cout << "NEURAL NETWORK VARIATIONAL QUANTUM MONTE CARLO\n\n";
-//    cout << "Machine Parameter\n\n";
-//    cout << "\tNumber of Inputs Units: " << L << "\n";
-//    //cout << "\tNumber of Output Units: " << n_out << "\n";
-//    cout << "\nNumber of filters: " << CL.n_f << "  ("<< PL.n_f <<")";
-//    cout << "\n W matrix size (" << CL.W.rows() << "x" << CL.W.cols() << ")" ;
-//    cout << "\n Z matrix size (" << PL.Z.rows() << "x" << PL.Z.cols() << ")" ;
-//    cout << "\nFilter Size: " << CL.f_size;
-//    cout << "\nHyper-parameters\n\n";
-//    cout << "\tLearning Rate: " << learning_rate << "\n";
-//    cout << "\tEpochs: " << epochs << "\n";
-//
-//    
-// 
-//}
+void VariationalMC::printNetwork(PsiLayer& PL, HiddenLayer& HL) 
+{
+
+    cout << "\n\n******************************\n\n" << endl;
+    cout << "NEURAL NETWORK VARIATIONAL QUANTUM MONTE CARLO\n\n";
+    cout << "Machine Parameter\n\n";
+    cout << "\tNumber of Inputs Units: " << L << "\n";
+    cout << "\nNumber of Hidden Units: " << HL.n_h << "\n";
+    cout << "\tMagnetic Field: " << h << "\n";
+    cout << "\nHyper-parameters\n\n";
+    cout << "\tLearning Rate: " << lr << "\n";
+    cout << "\tEpochs: " << epochs << "\n";
+    cout << "\tMonte Carlo Steps: " << MCS << "\n";
+    cout << "\tInitial distribution width: " << HL.bound << "\n";
+    
+    
+ 
+}
