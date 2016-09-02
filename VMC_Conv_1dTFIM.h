@@ -1,12 +1,11 @@
-#ifndef VMCFC1DTFIM_H
-#define VMCFC1DTFIM_H
+#ifndef VMCFC2DTFIMSQUARE_H
+#define VMCFC2DTFIMSQUARE_H
 
 #include <stdio.h>
 #include <math.h>
 #include <stdlib.h>
-//#include "PsiFC.cpp"
 #include <complex>
-#include "HiddenFC.cpp"
+#include "HiddenConv1d.cpp"
 
 using namespace std;
 //using namespace Eigen;
@@ -17,7 +16,7 @@ class VariationalMC {
         
         //Network Parameters
         int epochs;
-        int L;
+        int N;
         double lr; 
         int MCS;
         int eq;
@@ -25,16 +24,16 @@ class VariationalMC {
         double h;
 
         vector<int> spins;
-
+        
         double E;
         
         vector<vector<double> > dP_dW;
         vector<vector<double> > dP_dW_e;
-        vector<double> dP_db;
-        vector<double> dP_db_e;
+        vector<vector<double> > dP_db;
+        vector<vector<double> > dP_db_e;
         
-        vector<double> dP_dZ;
-        vector<double> dP_dZ_e;
+        vector<vector<double> > dP_dZ;
+        vector<vector<double> > dP_dZ_e;
         double dP_dc;
         double dP_dc_e;
 

@@ -1,7 +1,7 @@
 #ifndef HIDDENFC_H
 #define HIDDENFC_H
 
-#include "PsiFC.h"
+#include "PsiFC.cpp"
 
 using namespace std;
 

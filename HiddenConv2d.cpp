@@ -40,14 +40,14 @@ HiddenLayer::HiddenLayer(MTRand& random, int nF, int L_, double B)
 // Forward Pass 
 //*****************************************************************************
 
-vector<vector<double> > ConvLayer::forward_pass(vector<int> & input) {
+vector<vector<double> > HiddenLayer::forward_pass(vector<int> & input) {
     
     vector<vector<double> > h;
     vector<double> temp;
     double acc;
     
     for (int i=0; i<n_f; i++) {
-        for (int k=0; k<n_in; k++) {
+        for (int k=0; k<n_c; k++) {
             acc = 0.0;
             for (int j=0; j<f_size; j++) {
                 acc += W[i][j] * input[LocalityTable[k][j]];
@@ -113,21 +113,21 @@ void HiddenLayer::buildTable_NNsquare() {
     //}
     //cout << endl << endl;
     
-    //for (int k=0; k<n_c; k++) {
+    for (int k=0; k<n_c; k++) {
 
-    //    temp.push_back(k);
-    //    temp.push_back(Neighbors[k][0]);
-    //    temp.push_back(Neighbors[Neighbors[k][0]][0]);
-    //    temp.push_back(Neighbors[k][1]);
-    //    temp.push_back(Neighbors[Neighbors[k][1]][0]);
-    //    temp.push_back(Neighbors[Neighbors[Neighbors[k][1]][0]][0]);
-    //    temp.push_back(Neighbors[Neighbors[k][1]][1]);
-    //    temp.push_back(Neighbors[Neighbors[Neighbors[k][1]][1]][0]);
-    //    temp.push_back(Neighbors[Neighbors[Neighbors[Neighbors[k][1]][1]][0]][0]);
-    //    
-    //    LocalityTable.push_back(temp);
-    //    temp.clear();
-    //}
+        temp.push_back(k);
+        temp.push_back(Neighbors[k][0]);
+        temp.push_back(Neighbors[Neighbors[k][0]][0]);
+        temp.push_back(Neighbors[k][1]);
+        temp.push_back(Neighbors[Neighbors[k][1]][0]);
+        temp.push_back(Neighbors[Neighbors[Neighbors[k][1]][0]][0]);
+        temp.push_back(Neighbors[Neighbors[k][1]][1]);
+        temp.push_back(Neighbors[Neighbors[Neighbors[k][1]][1]][0]);
+        temp.push_back(Neighbors[Neighbors[Neighbors[Neighbors[k][1]][1]][0]][0]);
+        
+        LocalityTable.push_back(temp);
+        temp.clear();
+    }
 
     //
     //for (int k=0; k<n_c; k++) {

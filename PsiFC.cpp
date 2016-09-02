@@ -15,8 +15,9 @@ PsiLayer::PsiLayer(MTRand& random, int nIN, double B)
     for (int i=0; i<n_in; i++) {
         r = random.rand();
         Z.push_back(bound*(2.0 * r - 1.0));
+        //Z.push_back(0.0);
     }
-
+    //c = 0.0;
     c = bound*(2.0*random.rand()-1.0);
 }
 

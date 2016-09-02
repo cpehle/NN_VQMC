@@ -8,6 +8,8 @@
 //#include <Eigen/Core>
 //#include <map>
 #include <complex>
+#include <vector>
+#include "utilities.cpp"
 
 using namespace std;
 //using namespace Eigen;
@@ -18,17 +20,17 @@ class PsiLayer {
         
         //Network Parameters
         int n_f;        //Number of Filters of the previous hidden layer
-        int n_in;       //Number of possible configuration of filters
+        int n_c;       //Number of possible configuration of filters
         double bound;   //Initial width of weigth distribution
         
         vector<vector<double> > Z;      //Weigths
         double c;                       //Biase
 
         // Constructor
-        PsiLayer(MTRand & random, int nIn, int nF, double B);
+        PsiLayer(MTRand & random, int nC, int nF, double B);
         
         // Forward the input signal through the layer
-        double forward_pass_CONV(vector<vector<double> > & input);
+        double forward_pass(vector<vector<double> > & input);
 
         //Parameters Saving and Loading
         void loadParameters(ofstream & file);

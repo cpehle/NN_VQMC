@@ -19,6 +19,7 @@ HiddenLayer::HiddenLayer(MTRand& random, int nIn, int nH, double B)
         for (int i=0; i<n_h;i++) {
             r = random.rand();
             temp.push_back(bound*(2.0 * r - 1.0));
+            //temp.push_back(0.0);
         }
         W.push_back(temp);
         temp.clear();
@@ -26,10 +27,9 @@ HiddenLayer::HiddenLayer(MTRand& random, int nIn, int nH, double B)
     for (int i=0; i<n_h;i++) {
             r = random.rand();
             b.push_back(bound*(2.0 * r - 1.0));
+            //b.push_back(0.0);
         }
 
-    //b.assign(n_h,0.0);
-    
 }
 
 //*****************************************************************************

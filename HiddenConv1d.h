@@ -1,5 +1,5 @@
-#ifndef HIDDENCONV2D_H
-#define HIDDENCONV2D_H
+#ifndef HIDDENCONV1D_H
+#define HIDDENCONV1D_H
 
 #include "PsiConv.cpp"
 
@@ -13,23 +13,23 @@ class HiddenLayer {
         int n_f;          //M
         int f_size;        //l
         int n_c;
+        int N;
         double bound;
-        int L;
 
         vector<vector<double> > W;
         vector<vector<double> > b;
 
-        vector<vector<int> > LocalityTable; 
+        vector<vector<double> > LocalityTable; 
 
         // Constructor
-        HiddenLayer(MTRand & random, int nF,int L_, double B);
+        HiddenLayer(MTRand & random, int nF, int N_, double B);
          
         // Functions
         vector<vector<double> > forward_pass(vector<int> & input);
-        void buildTable_NNsquare();
+        
         void loadParameters(string& modelName);
         void saveParameters(string& modelName);
-        int index(int x, int y); 
+        
 };
 
 #endif
