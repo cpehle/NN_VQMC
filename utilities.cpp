@@ -18,6 +18,7 @@ void initializeParameters(map<string,float>& par)
 {
     par["h"]   = 0.0;
     par["nH"]  = 0;
+    par["nF"]  = 0;
     par["lr"]  = 0.0;
     par["ep"]  = 0;
     par["L"]   = 0;
