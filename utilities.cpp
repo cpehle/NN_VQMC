@@ -64,10 +64,14 @@ string buildOutputNameRaw(const string& network, const string& model,
     Name += model;
     Name += "_L";
     Name += boost::str(boost::format("%d") % par["L"]);
-    //Name += "_nH";
-    //Name += boost::str(boost::format("%d") % par["nH"]);
-    Name += "_nF";
-    Name += boost::str(boost::format("%d") % par["nF"]);
+    if (network.compare("FCNet") == 0) {
+        Name += "_nH";
+        Name += boost::str(boost::format("%d") % par["nH"]);
+    }
+    else if (network.compare("ConvNet") == 0) {
+        Name += "_nF";
+        Name += boost::str(boost::format("%d") % par["nF"]);
+    }
     Name += "_lr";
     Name += boost::str(boost::format("%.3f") % par["lr"]);
     Name += "_w";
